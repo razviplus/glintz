@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindPals &middot; Discover Your Personality Type</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--ord:#EA580C;--orl:#FED7AA;--orp:#FFF7ED;--w:#fff;--g50:#F9FAFB;--g100:#F3F4F6;--g200:#E5E7EB;--g400:#9CA3AF;--g600:#4B5563;--g800:#1F2937;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito Sans',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh;}
+h1,h2,h3{font-family:'Nunito',sans-serif;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+/* topbar */
+.tb{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:#fff;border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.logo{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.15rem;color:var(--or);display:flex;align-items:center;gap:7px;}
+.logo-dot{width:9px;height:9px;border-radius:50%;background:var(--or);}
+/* progress */
+.pw{padding:0 22px;background:#fff;border-bottom:1px solid var(--g100);}
+.pt{height:6px;background:var(--g200);border-radius:99px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--or),var(--ord));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.pm{display:flex;justify-content:space-between;padding:7px 0 9px;font-size:.78rem;font-weight:700;color:var(--g400);}
+/* buttons */
+.btn-o{background:var(--or);color:#fff;border:none;font-family:'Nunito',sans-serif;font-weight:800;padding:14px 36px;border-radius:99px;cursor:pointer;box-shadow:0 4px 16px rgba(249,115,22,.35);transition:all .2s;}
+.btn-o:hover{background:var(--ord);transform:translateY(-1px);}
+.btn-g{background:var(--g100);color:var(--g600);border:none;font-family:'Nunito',sans-serif;font-weight:800;padding:14px 28px;border-radius:99px;cursor:pointer;transition:all .2s;}
+.btn-g:hover{background:var(--g200);}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 22px;width:100%;max-width:600px;margin:0 auto;}
+/* hero */
+#sh{background:linear-gradient(160deg,#FFF7ED 0%,#fff 55%,#EFF6FF 100%);align-items:center;justify-content:flex-start;text-align:center;}
+.hbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 20px 40px;max-width:920px;margin:0 auto;width:100%;}
+.hbadge{display:inline-flex;align-items:center;background:var(--orp);border:2px solid var(--orl);border-radius:99px;padding:5px 16px;margin-bottom:16px;font-weight:800;font-size:.82rem;color:var(--ord);font-family:'Nunito',sans-serif;}
+.htitle{font-size:clamp(2rem,6vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:14px;}
+.htitle span{color:var(--or);}
+.hsub{font-size:1rem;color:var(--g600);max-width:420px;line-height:1.7;margin:0 auto 28px;}
+.hstats{display:flex;gap:28px;justify-content:center;margin-top:32px;flex-wrap:wrap;}
+.sbox{text-align:center;}
+.snum{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.8rem;color:var(--or);display:block;}
+.slbl{font-size:.72rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:1px;}
+/* intro */
+#si1,#si2,#si3{background:#fff;}
+.ibody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 22px;max-width:580px;margin:0 auto;text-align:center;width:100%;}
+.ititle{font-size:1.7rem;font-weight:900;margin-bottom:12px;}
+.itxt{font-size:.97rem;line-height:1.8;color:var(--g600);margin-bottom:20px;}
+.icard{background:var(--orp);border:2px solid var(--orl);border-radius:18px;padding:16px 20px;text-align:left;width:100%;margin-bottom:20px;}
+.icard p{font-size:.9rem;line-height:1.7;color:#374151;}
+.icard strong{color:var(--ord);}
+/* quiz */
+#sq{background:var(--g50);}
+.qbody{flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 18px 18px;max-width:640px;margin:0 auto;width:100%;}
+.qhdr{display:flex;align-items:flex-start;gap:11px;margin-bottom:20px;width:100%;}
+.qbub{background:#fff;border-radius:18px;padding:14px 18px;box-shadow:0 3px 12px rgba(0,0,0,.08);flex:1;position:relative;}
+.qbub::before{content:'';position:absolute;left:-8px;top:16px;border:8px solid transparent;border-right-color:#fff;border-left:0;}
+.qlbl{font-size:.7rem;font-weight:800;color:var(--or);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:5px;}
+.qtxt{font-family:'Nunito',sans-serif;font-weight:700;font-size:1.02rem;line-height:1.5;color:var(--g800);}
+.cw{width:100%;display:flex;flex-direction:column;gap:10px;}
+.cc{background:#fff;border:2.5px solid var(--g200);border-radius:18px;padding:14px 18px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:12px;}
+.cc:hover{border-color:var(--orl);background:var(--orp);transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.cc.sel{border-color:var(--or);background:var(--orp);box-shadow:0 0 0 4px rgba(249,115,22,.12);}
+.cl{width:30px;height:30px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;color:var(--g400);flex-shrink:0;transition:.2s;}
+.cc:hover .cl{background:var(--orl);color:var(--ord);}
+.cc.sel .cl{background:var(--or);color:#fff;}
+.ct{font-size:.93rem;line-height:1.6;color:var(--g600);padding-top:4px;}
+/* transition */
+#str{background:#fff;align-items:center;justify-content:center;text-align:center;padding:40px 22px;}
+/* result */
+#sre{background:var(--g50);}
+.rh{background:linear-gradient(135deg,var(--or),var(--ord));padding:40px 22px 30px;text-align:center;color:#fff;}
+.re{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;opacity:.85;margin-bottom:7px;}
+.rc{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(3.8rem,13vw,6.5rem);line-height:1;letter-spacing:5px;margin-bottom:3px;}
+.rn{font-size:1.35rem;font-weight:700;opacity:.9;margin-bottom:9px;font-style:italic;}
+.rt{font-size:.95rem;opacity:.85;max-width:440px;margin:0 auto;line-height:1.7;}
+.rbody{max-width:680px;margin:0 auto;padding:24px 18px 56px;}
+.sh{font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;color:var(--g800);margin:24px 0 12px;display:flex;align-items:center;gap:7px;}
+.sh::after{content:'';flex:1;height:2px;background:var(--g200);border-radius:2px;}
+.sc{background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:10px;}
+.sr{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center;margin-bottom:7px;}
+.sl{font-weight:700;font-size:.85rem;color:var(--g700);}
+.srr{font-weight:700;font-size:.85rem;color:var(--g400);text-align:right;}
+.sp{font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;color:var(--or);text-align:center;white-space:nowrap;}
+.bw{grid-column:1/-1;height:9px;background:var(--g200);border-radius:99px;overflow:hidden;}
+.bf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--or),var(--ord));transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0;}
+.tg{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px;}
+.tc{background:#fff;border-radius:18px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.ti{font-size:1.6rem;margin-bottom:7px;}
+.tt{font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;margin-bottom:4px;}
+.td{font-size:.84rem;line-height:1.6;color:var(--g600);}
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-radius:18px;overflow:hidden;}
+.fc{background:#fff;padding:13px 9px;text-align:center;}
+.fc:first-child{background:var(--or);color:#fff;}
+.fc:first-child .fl,.fc:first-child .fs{color:rgba(255,255,255,.8);}
+.fl{font-size:.65rem;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--g400);display:block;margin-bottom:4px;}
+.fn{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.25rem;}
+.fs{font-size:.67rem;color:var(--g400);margin-top:2px;display:block;}
+.stg{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.stc{background:#fff;border-radius:18px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.stt{font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:9px;}
+.stc ul{padding-left:15px;}
+.stc li{font-size:.84rem;line-height:1.7;color:var(--g600);margin-bottom:3px;}
+.fw{display:flex;flex-wrap:wrap;gap:8px;}
+.fp{background:#fff;border:2px solid var(--g200);border-radius:99px;padding:5px 14px;font-weight:700;font-size:.85rem;}
+.bret{display:block;width:100%;max-width:280px;margin:32px auto 0;background:var(--or);color:#fff;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:.98rem;padding:14px 24px;border-radius:99px;cursor:pointer;box-shadow:0 4px 16px rgba(249,115,22,.32);transition:all .2s;}
+.bret:hover{background:var(--ord);transform:translateY(-2px);}
+/* animations */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.float{animation:float 3s ease-in-out infinite;}
+.fu{animation:fadeUp .4s ease both;}
+@media(max-width:540px){.fg{grid-template-columns:repeat(2,1fr)}.stg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div id="sh" class="screen active">
+<div class="hbody">
+  <div class="hbadge">Free &middot; No signup &middot; ~7 min</div>
+  <h1 class="htitle">What&rsquo;s your<br><span>personality type?</span></h1>
+  <p class="hsub">A friendly, research-inspired test to find your type among the famous 16 &mdash; and understand how your mind truly works.</p>
+  <button class="btn-o" style="font-size:1.05rem;padding:16px 48px;" onclick="goTo('si1')">Let&rsquo;s find out! &#8594;</button>
+
+  <!-- CAMPFIRE SCENE -->
+  <div style="width:100%;margin:36px 0 0;">
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:6px;">Meet all 16 personality types</h2>
+    <p style="font-size:.88rem;color:var(--g600);margin-bottom:16px;">Every person around this campfire sees the world differently. Which one is you?</p>
+    <div style="width:100%;overflow:hidden;">
+      <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;max-height:500px;">
+        <defs>
+          <radialGradient id="gg" cx="50%" cy="100%" r="60%"><stop offset="0%" stop-color="#FEF3C7"/><stop offset="100%" stop-color="#FFF7ED"/></radialGradient>
+          <radialGradient id="gw" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FCD34D" stop-opacity=".35"/><stop offset="100%" stop-color="#F97316" stop-opacity="0"/></radialGradient>
+        </defs>
+        <!-- Ground -->
+        <ellipse cx="450" cy="470" rx="430" ry="55" fill="url(#gg)"/>
+        <!-- Fire glow -->
+        <ellipse cx="450" cy="395" rx="110" ry="70" fill="url(#gw)"/>
+        <!-- Stones -->
+        <ellipse cx="418" cy="413" rx="13" ry="7" fill="#9CA3AF"/>
+        <ellipse cx="450" cy="417" rx="12" ry="6" fill="#6B7280"/>
+        <ellipse cx="482" cy="413" rx="13" ry="7" fill="#9CA3AF"/>
+        <ellipse cx="432" cy="420" rx="10" ry="5" fill="#6B7280"/>
+        <ellipse cx="468" cy="420" rx="10" ry="5" fill="#9CA3AF"/>
+        <!-- Logs -->
+        <ellipse cx="436" cy="418" rx="28" ry="7" fill="#92400E" transform="rotate(-18,436,418)"/>
+        <ellipse cx="464" cy="418" rx="28" ry="7" fill="#78350F" transform="rotate(18,464,418)"/>
+        <!-- Flames -->
+        <path d="M438,415 Q434,398 443,388 Q447,380 450,372 Q453,380 457,388 Q466,398 462,415 Q457,406 450,402 Q443,406 438,415Z" fill="#F97316"/>
+        <path d="M441,415 Q438,403 445,394 Q448,388 450,383 Q452,388 455,394 Q462,403 459,415 Q455,409 450,406 Q445,409 441,415Z" fill="#FCD34D"/>
+        <path d="M445,415 Q443,408 447,403 Q449,399 450,395 Q451,399 453,403 Q457,408 455,415 Q452,411 450,409 Q448,411 445,415Z" fill="#FEF08A"/>
+        <path d="M431,415 Q428,406 432,398 Q434,392 436,386 Q438,392 438,400 Q435,408 431,415Z" fill="#EF4444" opacity=".7"/>
+        <path d="M469,415 Q472,406 468,398 Q466,392 464,386 Q462,392 462,400 Q465,408 469,415Z" fill="#EF4444" opacity=".7"/>
+        <!-- Sparks -->
+        <circle cx="445" cy="368" r="1.8" fill="#FCD34D" opacity=".8"/>
+        <circle cx="457" cy="363" r="1.3" fill="#FEF08A" opacity=".7"/>
+        <circle cx="450" cy="358" r="1" fill="#FEF08A" opacity=".6"/>
+        <circle cx="441" cy="361" r="1.3" fill="#F97316" opacity=".5"/>
+
+        <!-- ============================
+             CHARACTERS
+             Each: g[translate] > log + body + head + hair + bubble
+        ============================= -->
+
+        <!-- INFP – far left sitting, green -->
+        <g transform="translate(32,310)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="40" cy="88" rx="38" ry="11" fill="#A16207"/><ellipse cx="40" cy="83" rx="38" ry="11" fill="#C28012"/>
+          <ellipse cx="40" cy="60" rx="16" ry="22" fill="#16A34A"/>
+          <rect x="28" y="73" width="10" height="18" rx="4" fill="#15803D"/><rect x="42" y="73" width="10" height="18" rx="4" fill="#15803D"/>
+          <ellipse cx="33" cy="93" rx="9" ry="5" fill="#1F2937"/><ellipse cx="47" cy="93" rx="9" ry="5" fill="#1F2937"/>
+          <circle cx="40" cy="35" r="16" fill="#FDE68A"/>
+          <ellipse cx="40" cy="22" rx="16" ry="9" fill="#92400E"/><ellipse cx="27" cy="29" rx="7" ry="11" fill="#92400E"/><ellipse cx="53" cy="29" rx="7" ry="11" fill="#92400E"/>
+          <circle cx="34" cy="33" r="3.5" fill="white"/><circle cx="46" cy="33" r="3.5" fill="white"/>
+          <circle cx="35" cy="34" r="2" fill="#1F2937"/><circle cx="47" cy="34" r="2" fill="#1F2937"/>
+          <circle cx="30" cy="38" r="4" fill="#FCA5A5" opacity=".45"/><circle cx="50" cy="38" r="4" fill="#FCA5A5" opacity=".45"/>
+          <path d="M33 41 Q40 46 47 41" stroke="#92400E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="54" y="58" width="10" height="12" rx="3" fill="#EA580C"/>
+          <rect x="3" y="0" width="72" height="34" rx="9" fill="#16A34A"/>
+          <polygon points="22,34 30,46 38,34" fill="#16A34A"/>
+          <text x="39" y="14" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12.5">INFP</text>
+          <text x="39" y="27" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9.5">The Idealist</text>
+        </g>
+
+        <!-- ENFP – left standing, purple -->
+        <g transform="translate(128,295)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="32" cy="95" rx="27" ry="9" fill="#A16207"/><ellipse cx="32" cy="90" rx="27" ry="9" fill="#C28012"/>
+          <ellipse cx="32" cy="65" rx="14" ry="24" fill="#7C3AED"/>
+          <rect x="22" y="80" width="9" height="20" rx="4" fill="#6D28D9"/><rect x="35" y="80" width="9" height="20" rx="4" fill="#6D28D9"/>
+          <ellipse cx="26.5" cy="100" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40.5" cy="100" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="32" cy="36" r="15" fill="#FDE68A"/>
+          <ellipse cx="32" cy="23" rx="14" ry="8" fill="#D97706"/><ellipse cx="19" cy="27" rx="6" ry="10" fill="#D97706"/><ellipse cx="45" cy="27" rx="6" ry="10" fill="#D97706"/>
+          <circle cx="16" cy="22" r="5" fill="#FCD34D"/><circle cx="48" cy="22" r="5" fill="#FCD34D"/>
+          <circle cx="26" cy="33" r="3" fill="white"/><circle cx="38" cy="33" r="3" fill="white"/>
+          <circle cx="27" cy="34" r="1.8" fill="#1F2937"/><circle cx="39" cy="34" r="1.8" fill="#1F2937"/>
+          <circle cx="22" cy="38" r="3.5" fill="#FCA5A5" opacity=".45"/><circle cx="42" cy="38" r="3.5" fill="#FCA5A5" opacity=".45"/>
+          <path d="M26 41 Q32 46 38 41" stroke="#92400E" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <ellipse cx="9" cy="57" rx="6" ry="13" fill="#7C3AED" transform="rotate(-32,9,57)"/>
+          <ellipse cx="55" cy="57" rx="6" ry="13" fill="#7C3AED" transform="rotate(32,55,57)"/>
+          <circle cx="3" cy="47" r="6.5" fill="#FCD34D"/><circle cx="61" cy="47" r="6.5" fill="#FCD34D"/>
+          <rect x="-4" y="0" width="72" height="34" rx="9" fill="#7C3AED"/>
+          <polygon points="20,34 28,46 36,34" fill="#7C3AED"/>
+          <text x="32" y="14" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12.5">ENFP</text>
+          <text x="32" y="27" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9.5">Campaigner</text>
+        </g>
+
+        <!-- INFJ – back left sitting, teal -->
+        <g transform="translate(55,198)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="80" rx="30" ry="10" fill="#0E7490"/><ellipse cx="34" cy="75" rx="30" ry="10" fill="#0891B2"/>
+          <ellipse cx="34" cy="55" rx="13" ry="19" fill="#0E7490"/>
+          <rect x="25" y="66" width="8" height="17" rx="3" fill="#155E75"/><rect x="37" y="66" width="8" height="17" rx="3" fill="#155E75"/>
+          <ellipse cx="29" cy="83" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="83" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="30" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="18" rx="13" ry="7" fill="#1F2937"/><ellipse cx="23" cy="22" rx="5" ry="9" fill="#1F2937"/><ellipse cx="45" cy="22" rx="5" ry="9" fill="#1F2937"/>
+          <circle cx="28" cy="27" r="3" fill="white"/><circle cx="40" cy="27" r="3" fill="white"/>
+          <circle cx="29" cy="28" r="1.8" fill="#1F2937"/><circle cx="41" cy="28" r="1.8" fill="#1F2937"/>
+          <path d="M28 34 Q34 38 40 34" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <rect x="2" y="-44" width="68" height="33" rx="8" fill="#0891B2"/>
+          <polygon points="24,-11 31,1 38,-11" fill="#0891B2"/>
+          <text x="36" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">INFJ</text>
+          <text x="36" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Advocate</text>
+        </g>
+
+        <!-- ENFJ – back left standing, red -->
+        <g transform="translate(168,183)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="30" cy="90" rx="26" ry="9" fill="#A16207"/><ellipse cx="30" cy="85" rx="26" ry="9" fill="#C28012"/>
+          <ellipse cx="30" cy="60" rx="13" ry="23" fill="#DC2626"/>
+          <rect x="20" y="74" width="8" height="20" rx="4" fill="#B91C1C"/><rect x="32" y="74" width="8" height="20" rx="4" fill="#B91C1C"/>
+          <ellipse cx="24" cy="94" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="36" cy="94" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="30" cy="32" r="14" fill="#FDE68A"/>
+          <ellipse cx="30" cy="20" rx="13" ry="7" fill="#374151"/><ellipse cx="20" cy="24" rx="5" ry="9" fill="#374151"/><ellipse cx="40" cy="24" rx="5" ry="9" fill="#374151"/>
+          <circle cx="25" cy="29" r="3" fill="white"/><circle cx="35" cy="29" r="3" fill="white"/>
+          <circle cx="26" cy="30" r="1.8" fill="#1F2937"/><circle cx="36" cy="30" r="1.8" fill="#1F2937"/>
+          <path d="M24 36 Q30 41 36 36" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="46" cy="56" rx="5" ry="13" fill="#FDE68A" transform="rotate(30,46,56)"/>
+          <ellipse cx="52" cy="47" rx="5" ry="5" fill="#FDE68A"/>
+          <rect x="-2" y="-48" width="70" height="33" rx="8" fill="#DC2626"/>
+          <polygon points="22,-15 30,-3 38,-15" fill="#DC2626"/>
+          <text x="33" y="-35" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ENFJ</text>
+          <text x="33" y="-23" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Protagonist</text>
+        </g>
+
+        <!-- INTJ – back center-left, navy -->
+        <g transform="translate(278,178)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="30" cy="88" rx="26" ry="9" fill="#A16207"/><ellipse cx="30" cy="83" rx="26" ry="9" fill="#C28012"/>
+          <ellipse cx="30" cy="58" rx="13" ry="23" fill="#1D4ED8"/>
+          <rect x="20" y="72" width="8" height="20" rx="4" fill="#1E40AF"/><rect x="32" y="72" width="8" height="20" rx="4" fill="#1E40AF"/>
+          <ellipse cx="24" cy="92" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="36" cy="92" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="30" cy="30" r="14" fill="#FDE68A"/>
+          <ellipse cx="30" cy="19" rx="13" ry="7" fill="#1F2937"/><ellipse cx="20" cy="23" rx="5" ry="9" fill="#1F2937"/>
+          <rect x="21" y="25" width="9" height="7" rx="3" fill="none" stroke="#374151" stroke-width="1.4"/>
+          <rect x="31" y="25" width="9" height="7" rx="3" fill="none" stroke="#374151" stroke-width="1.4"/>
+          <line x1="30" y1="28" x2="31" y2="28" stroke="#374151" stroke-width="1.4"/>
+          <circle cx="25.5" cy="26.5" r="2.5" fill="white"/><circle cx="35.5" cy="26.5" r="2.5" fill="white"/>
+          <circle cx="26" cy="27.5" r="1.5" fill="#1F2937"/><circle cx="36" cy="27.5" r="1.5" fill="#1F2937"/>
+          <path d="M24 34 Q30 38 36 34" stroke="#92400E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <rect x="-2" y="-48" width="72" height="33" rx="8" fill="#1D4ED8"/>
+          <polygon points="24,-15 32,-3 40,-15" fill="#1D4ED8"/>
+          <text x="34" y="-35" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">INTJ</text>
+          <text x="34" y="-23" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Mastermind</text>
+        </g>
+
+        <!-- ENTJ – back center, crimson -->
+        <g transform="translate(376,170)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="30" cy="92" rx="26" ry="9" fill="#A16207"/><ellipse cx="30" cy="87" rx="26" ry="9" fill="#C28012"/>
+          <ellipse cx="30" cy="61" rx="13" ry="24" fill="#B91C1C"/>
+          <rect x="20" y="75" width="9" height="21" rx="4" fill="#991B1B"/><rect x="33" y="75" width="9" height="21" rx="4" fill="#991B1B"/>
+          <ellipse cx="24.5" cy="96" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="37.5" cy="96" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="30" cy="31" r="14" fill="#FDE68A"/>
+          <ellipse cx="30" cy="20" rx="13" ry="7" fill="#374151"/><ellipse cx="20" cy="24" rx="5" ry="9" fill="#374151"/><ellipse cx="40" cy="24" rx="5" ry="9" fill="#374151"/>
+          <circle cx="25" cy="28" r="3" fill="white"/><circle cx="35" cy="28" r="3" fill="white"/>
+          <circle cx="26" cy="29" r="1.8" fill="#1F2937"/><circle cx="36" cy="29" r="1.8" fill="#1F2937"/>
+          <path d="M24 35 Q30 40 36 35" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="50" cy="58" rx="5" ry="14" fill="#FDE68A" transform="rotate(35,50,58)"/>
+          <ellipse cx="57" cy="48" rx="5" ry="5" fill="#FDE68A"/>
+          <rect x="-2" y="-50" width="72" height="33" rx="8" fill="#B91C1C"/>
+          <polygon points="24,-17 32,-5 40,-17" fill="#B91C1C"/>
+          <text x="34" y="-37" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ENTJ</text>
+          <text x="34" y="-25" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Commander</text>
+        </g>
+
+        <!-- INTP – back center-right, teal-green -->
+        <g transform="translate(486,175)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="30" cy="88" rx="27" ry="9" fill="#A16207"/><ellipse cx="30" cy="83" rx="27" ry="9" fill="#C28012"/>
+          <ellipse cx="30" cy="57" rx="13" ry="23" fill="#059669"/>
+          <rect x="20" y="71" width="8" height="20" rx="4" fill="#047857"/><rect x="32" y="71" width="8" height="20" rx="4" fill="#047857"/>
+          <ellipse cx="24" cy="92" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="36" cy="92" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="30" cy="30" r="14" fill="#FDE68A"/>
+          <ellipse cx="30" cy="19" rx="13" ry="7" fill="#92400E"/><ellipse cx="19" cy="23" rx="6" ry="10" fill="#92400E"/><ellipse cx="41" cy="23" rx="6" ry="10" fill="#92400E"/>
+          <ellipse cx="34" cy="18" rx="5" ry="6" fill="#B45309"/>
+          <rect x="21" y="25" width="9" height="7" rx="3" fill="none" stroke="#374151" stroke-width="1.4"/>
+          <rect x="31" y="25" width="9" height="7" rx="3" fill="none" stroke="#374151" stroke-width="1.4"/>
+          <line x1="30" y1="28" x2="31" y2="28" stroke="#374151" stroke-width="1.4"/>
+          <circle cx="25.5" cy="26.5" r="2.5" fill="white"/><circle cx="35.5" cy="26.5" r="2.5" fill="white"/>
+          <circle cx="26" cy="27.5" r="1.5" fill="#1F2937"/><circle cx="36" cy="27.5" r="1.5" fill="#1F2937"/>
+          <path d="M24 34 Q30 39 36 34" stroke="#92400E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <rect x="-2" y="-48" width="70" height="33" rx="8" fill="#059669"/>
+          <polygon points="22,-15 30,-3 38,-15" fill="#059669"/>
+          <text x="33" y="-35" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">INTP</text>
+          <text x="33" y="-23" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Logician</text>
+        </g>
+
+        <!-- ENTP – back right, dark/purple -->
+        <g transform="translate(596,178)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="30" cy="88" rx="26" ry="9" fill="#A16207"/><ellipse cx="30" cy="83" rx="26" ry="9" fill="#C28012"/>
+          <ellipse cx="30" cy="57" rx="13" ry="23" fill="#1E293B"/>
+          <rect x="20" y="71" width="8" height="20" rx="4" fill="#0F172A"/><rect x="32" y="71" width="8" height="20" rx="4" fill="#0F172A"/>
+          <ellipse cx="24" cy="92" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="36" cy="92" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="30" cy="30" r="14" fill="#FDE68A"/>
+          <ellipse cx="30" cy="19" rx="13" ry="7" fill="#1F2937"/><ellipse cx="38" cy="22" rx="5" ry="9" fill="#1F2937"/>
+          <ellipse cx="40" cy="20" rx="4" ry="7" fill="#7C3AED"/>
+          <rect x="19" y="24" width="9" height="7" rx="3" fill="#8B5CF6" opacity=".9"/>
+          <rect x="29" y="24" width="9" height="7" rx="3" fill="#8B5CF6" opacity=".9"/>
+          <line x1="28" y1="27" x2="29" y2="27" stroke="#7C3AED" stroke-width="1.4"/>
+          <path d="M24 34 Q30 39 36 34" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="9" cy="53" rx="5" ry="12" fill="#FDE68A" transform="rotate(-28,9,53)"/>
+          <ellipse cx="4" cy="44" rx="4" ry="4" fill="#FDE68A"/>
+          <rect x="-2" y="-48" width="70" height="33" rx="8" fill="#6D28D9"/>
+          <polygon points="22,-15 30,-3 38,-15" fill="#6D28D9"/>
+          <text x="33" y="-35" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ENTP</text>
+          <text x="33" y="-23" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Debater</text>
+        </g>
+
+        <!-- ISFJ – back far right sitting, pink -->
+        <g transform="translate(706,195)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="82" rx="32" ry="10" fill="#A16207"/><ellipse cx="34" cy="77" rx="32" ry="10" fill="#C28012"/>
+          <ellipse cx="34" cy="55" rx="13" ry="20" fill="#DB2777"/>
+          <rect x="24" y="67" width="8" height="17" rx="3" fill="#BE185D"/><rect x="36" y="67" width="8" height="17" rx="3" fill="#BE185D"/>
+          <ellipse cx="29" cy="86" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="86" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="30" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="19" rx="13" ry="7" fill="#B45309"/><ellipse cx="23" cy="23" rx="5" ry="9" fill="#B45309"/><ellipse cx="45" cy="23" rx="5" ry="9" fill="#B45309"/>
+          <circle cx="28" cy="27" r="3" fill="white"/><circle cx="40" cy="27" r="3" fill="white"/>
+          <circle cx="29" cy="28" r="1.8" fill="#1F2937"/><circle cx="41" cy="28" r="1.8" fill="#1F2937"/>
+          <circle cx="24" cy="32" r="3.5" fill="#FCA5A5" opacity=".45"/><circle cx="44" cy="32" r="3.5" fill="#FCA5A5" opacity=".45"/>
+          <path d="M28 34 Q34 39 40 34" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <rect x="0" y="-46" width="70" height="33" rx="8" fill="#DB2777"/>
+          <polygon points="22,-13 30,-1 38,-13" fill="#DB2777"/>
+          <text x="35" y="-33" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ISFJ</text>
+          <text x="35" y="-21" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Defender</text>
+        </g>
+
+        <!-- ISTJ – far right sitting, slate -->
+        <g transform="translate(820,310)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="36" cy="86" rx="34" ry="11" fill="#A16207"/><ellipse cx="36" cy="81" rx="34" ry="11" fill="#C28012"/>
+          <ellipse cx="36" cy="59" rx="14" ry="20" fill="#475569"/>
+          <rect x="26" y="71" width="9" height="17" rx="3" fill="#334155"/><rect x="39" y="71" width="9" height="17" rx="3" fill="#334155"/>
+          <ellipse cx="30.5" cy="90" rx="9" ry="5" fill="#1F2937"/><ellipse cx="41.5" cy="90" rx="9" ry="5" fill="#1F2937"/>
+          <circle cx="36" cy="32" r="15" fill="#FDE68A"/>
+          <ellipse cx="36" cy="20" rx="14" ry="7" fill="#374151"/><ellipse cx="25" cy="24" rx="5" ry="9" fill="#374151"/><ellipse cx="47" cy="24" rx="5" ry="9" fill="#374151"/>
+          <circle cx="30" cy="29" r="3" fill="white"/><circle cx="42" cy="29" r="3" fill="white"/>
+          <circle cx="31" cy="30" r="1.8" fill="#1F2937"/><circle cx="43" cy="30" r="1.8" fill="#1F2937"/>
+          <path d="M30 36 Q36 40 42 36" stroke="#92400E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <rect x="0" y="-46" width="72" height="33" rx="8" fill="#475569"/>
+          <polygon points="22,-13 30,-1 38,-13" fill="#475569"/>
+          <text x="36" y="-33" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ISTJ</text>
+          <text x="36" y="-21" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Logistician</text>
+        </g>
+
+        <!-- Front row: ISFP, ESFP, ESTP, ISTP, ESTJ, ESFJ sitting on logs -->
+
+        <!-- ISFP – front left, amber -->
+        <g transform="translate(100,360)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="36" cy="88" rx="34" ry="11" fill="#A16207"/><ellipse cx="36" cy="83" rx="34" ry="11" fill="#C28012"/>
+          <ellipse cx="36" cy="60" rx="14" ry="22" fill="#D97706"/>
+          <rect x="26" y="74" width="9" height="18" rx="3" fill="#B45309"/><rect x="39" y="74" width="9" height="18" rx="3" fill="#B45309"/>
+          <ellipse cx="31" cy="93" rx="9" ry="5" fill="#1F2937"/><ellipse cx="43" cy="93" rx="9" ry="5" fill="#1F2937"/>
+          <circle cx="36" cy="33" r="15" fill="#FDE68A"/>
+          <ellipse cx="36" cy="21" rx="13" ry="7" fill="#FDE68A"/><ellipse cx="24" cy="25" rx="5" ry="10" fill="#FDE68A"/><ellipse cx="48" cy="25" rx="5" ry="10" fill="#FDE68A"/>
+          <circle cx="30" cy="30" r="3" fill="white"/><circle cx="42" cy="30" r="3" fill="white"/>
+          <circle cx="31" cy="31" r="1.8" fill="#1F2937"/><circle cx="43" cy="31" r="1.8" fill="#1F2937"/>
+          <circle cx="26" cy="35" r="3.5" fill="#FCA5A5" opacity=".45"/><circle cx="46" cy="35" r="3.5" fill="#FCA5A5" opacity=".45"/>
+          <path d="M30 38 Q36 43 42 38" stroke="#92400E" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <rect x="2" y="-44" width="68" height="33" rx="8" fill="#D97706"/>
+          <polygon points="20,-11 28,1 36,-11" fill="#D97706"/>
+          <text x="36" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ISFP</text>
+          <text x="36" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Artist</text>
+        </g>
+
+        <!-- ESFP – front center-left, orange -->
+        <g transform="translate(220,358)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="90" rx="32" ry="11" fill="#A16207"/><ellipse cx="34" cy="85" rx="32" ry="11" fill="#C28012"/>
+          <ellipse cx="34" cy="61" rx="13" ry="23" fill="#EA580C"/>
+          <rect x="24" y="75" width="8" height="20" rx="4" fill="#C2410C"/><rect x="36" y="75" width="8" height="20" rx="4" fill="#C2410C"/>
+          <ellipse cx="28" cy="95" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="95" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="32" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="21" rx="13" ry="7" fill="#F59E0B"/><ellipse cx="23" cy="25" rx="5" ry="9" fill="#F59E0B"/><ellipse cx="45" cy="25" rx="5" ry="9" fill="#F59E0B"/>
+          <circle cx="28" cy="29" r="3" fill="white"/><circle cx="40" cy="29" r="3" fill="white"/>
+          <circle cx="29" cy="30" r="1.8" fill="#1F2937"/><circle cx="41" cy="30" r="1.8" fill="#1F2937"/>
+          <circle cx="24" cy="34" r="3.5" fill="#FCA5A5" opacity=".45"/><circle cx="44" cy="34" r="3.5" fill="#FCA5A5" opacity=".45"/>
+          <path d="M28 37 Q34 42 40 37" stroke="#92400E" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <ellipse cx="8" cy="53" rx="5" ry="12" fill="#EA580C" transform="rotate(-36,8,53)"/>
+          <ellipse cx="60" cy="53" rx="5" ry="12" fill="#EA580C" transform="rotate(36,60,53)"/>
+          <rect x="0" y="-44" width="70" height="33" rx="8" fill="#EA580C"/>
+          <polygon points="21,-11 29,1 37,-11" fill="#EA580C"/>
+          <text x="35" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ESFP</text>
+          <text x="35" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Entertainer</text>
+        </g>
+
+        <!-- ESTP – front center, blue -->
+        <g transform="translate(342,355)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="90" rx="30" ry="11" fill="#A16207"/><ellipse cx="34" cy="85" rx="30" ry="11" fill="#C28012"/>
+          <ellipse cx="34" cy="61" rx="13" ry="23" fill="#1D4ED8"/>
+          <rect x="24" y="75" width="8" height="20" rx="4" fill="#1E3A8A"/><rect x="36" y="75" width="8" height="20" rx="4" fill="#1E3A8A"/>
+          <ellipse cx="28" cy="95" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="95" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="32" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="21" rx="13" ry="7" fill="#1F2937"/><ellipse cx="23" cy="25" rx="5" ry="9" fill="#1F2937"/><ellipse cx="45" cy="25" rx="5" ry="9" fill="#1F2937"/>
+          <circle cx="28" cy="29" r="3" fill="white"/><circle cx="40" cy="29" r="3" fill="white"/>
+          <circle cx="29" cy="30" r="1.8" fill="#1F2937"/><circle cx="41" cy="30" r="1.8" fill="#1F2937"/>
+          <path d="M28 37 Q34 41 40 37" stroke="#92400E" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="54" cy="58" rx="5" ry="13" fill="#FDE68A" transform="rotate(30,54,58)"/>
+          <ellipse cx="60" cy="49" rx="5" ry="5" fill="#FDE68A"/>
+          <rect x="0" y="-44" width="70" height="33" rx="8" fill="#1D4ED8"/>
+          <polygon points="21,-11 29,1 37,-11" fill="#1D4ED8"/>
+          <text x="35" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ESTP</text>
+          <text x="35" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Dynamo</text>
+        </g>
+
+        <!-- ISTP – front center-right, charcoal -->
+        <g transform="translate(466,358)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="88" rx="32" ry="11" fill="#A16207"/><ellipse cx="34" cy="83" rx="32" ry="11" fill="#C28012"/>
+          <ellipse cx="34" cy="59" rx="13" ry="22" fill="#374151"/>
+          <rect x="24" y="73" width="8" height="18" rx="3" fill="#1F2937"/><rect x="36" y="73" width="8" height="18" rx="3" fill="#1F2937"/>
+          <ellipse cx="28" cy="92" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="92" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="31" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="20" rx="13" ry="7" fill="#1F2937"/><ellipse cx="23" cy="24" rx="5" ry="9" fill="#1F2937"/><ellipse cx="45" cy="24" rx="5" ry="9" fill="#1F2937"/>
+          <circle cx="28" cy="28" r="3" fill="white"/><circle cx="40" cy="28" r="3" fill="white"/>
+          <circle cx="29" cy="29" r="1.8" fill="#1F2937"/><circle cx="41" cy="29" r="1.8" fill="#1F2937"/>
+          <path d="M28 35 Q34 38 40 35" stroke="#92400E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <rect x="0" y="-44" width="70" height="33" rx="8" fill="#374151"/>
+          <polygon points="21,-11 29,1 37,-11" fill="#374151"/>
+          <text x="35" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ISTP</text>
+          <text x="35" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Virtuoso</text>
+        </g>
+
+        <!-- ESFJ – front right, rose -->
+        <g transform="translate(588,358)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="34" cy="88" rx="32" ry="11" fill="#A16207"/><ellipse cx="34" cy="83" rx="32" ry="11" fill="#C28012"/>
+          <ellipse cx="34" cy="59" rx="13" ry="22" fill="#BE185D"/>
+          <rect x="24" y="73" width="8" height="18" rx="3" fill="#9D174D"/><rect x="36" y="73" width="8" height="18" rx="3" fill="#9D174D"/>
+          <ellipse cx="28" cy="92" rx="8" ry="4.5" fill="#1F2937"/><ellipse cx="40" cy="92" rx="8" ry="4.5" fill="#1F2937"/>
+          <circle cx="34" cy="31" r="14" fill="#FDE68A"/>
+          <ellipse cx="34" cy="20" rx="13" ry="7" fill="#D97706"/><ellipse cx="23" cy="24" rx="5" ry="10" fill="#D97706"/><ellipse cx="45" cy="24" rx="5" ry="10" fill="#D97706"/>
+          <circle cx="28" cy="28" r="3" fill="white"/><circle cx="40" cy="28" r="3" fill="white"/>
+          <circle cx="29" cy="29" r="1.8" fill="#1F2937"/><circle cx="41" cy="29" r="1.8" fill="#1F2937"/>
+          <circle cx="24" cy="33" r="3.5" fill="#FCA5A5" opacity=".45"/><circle cx="44" cy="33" r="3.5" fill="#FCA5A5" opacity=".45"/>
+          <path d="M28 35 Q34 40 40 35" stroke="#92400E" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <rect x="0" y="-44" width="70" height="33" rx="8" fill="#BE185D"/>
+          <polygon points="21,-11 29,1 37,-11" fill="#BE185D"/>
+          <text x="35" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ESFJ</text>
+          <text x="35" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Caregiver</text>
+        </g>
+
+        <!-- ESTJ – far right sitting, teal-dark -->
+        <g transform="translate(712,362)" onclick="goTo('si1')" style="cursor:pointer">
+          <ellipse cx="36" cy="87" rx="34" ry="11" fill="#A16207"/><ellipse cx="36" cy="82" rx="34" ry="11" fill="#C28012"/>
+          <ellipse cx="36" cy="59" rx="14" ry="21" fill="#0F766E"/>
+          <rect x="26" y="72" width="9" height="18" rx="3" fill="#0D6B63"/><rect x="39" y="72" width="9" height="18" rx="3" fill="#0D6B63"/>
+          <ellipse cx="30.5" cy="91" rx="9" ry="5" fill="#1F2937"/><ellipse cx="43.5" cy="91" rx="9" ry="5" fill="#1F2937"/>
+          <circle cx="36" cy="30" r="15" fill="#FDE68A"/>
+          <ellipse cx="36" cy="19" rx="13" ry="7" fill="#374151"/><ellipse cx="25" cy="23" rx="5" ry="9" fill="#374151"/><ellipse cx="47" cy="23" rx="5" ry="9" fill="#374151"/>
+          <circle cx="30" cy="27" r="3" fill="white"/><circle cx="42" cy="27" r="3" fill="white"/>
+          <circle cx="31" cy="28" r="1.8" fill="#1F2937"/><circle cx="43" cy="28" r="1.8" fill="#1F2937"/>
+          <path d="M30 34 Q36 38 42 34" stroke="#92400E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <rect x="2" y="-44" width="70" height="33" rx="8" fill="#0F766E"/>
+          <polygon points="22,-11 30,1 38,-11" fill="#0F766E"/>
+          <text x="37" y="-31" text-anchor="middle" fill="white" font-family="Nunito,sans-serif" font-weight="900" font-size="12">ESTJ</text>
+          <text x="37" y="-19" text-anchor="middle" fill="rgba(255,255,255,.82)" font-family="Nunito,sans-serif" font-weight="700" font-size="9">Executive</text>
+        </g>
+
+      </svg>
+    </div>
+    <p style="text-align:center;font-size:.8rem;font-weight:700;color:var(--g400);margin-top:6px">&#128073; Click any character to start the test</p>
+  </div>
+
+  <div class="hstats">
+    <div class="sbox"><span class="snum">36</span><span class="slbl">Questions</span></div>
+    <div class="sbox"><span class="snum">~7</span><span class="slbl">Minutes</span></div>
+    <div class="sbox"><span class="snum">16</span><span class="slbl">Types</span></div>
+    <div class="sbox"><span class="snum">Free</span><span class="slbl">Always</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== INTRO 1 ===== -->
+<div id="si1" class="screen">
+<div class="tb"><div class="logo"><div class="logo-dot"></div>MindPals</div><span style="font-size:.8rem;font-weight:700;color:var(--g400)">Step 1 of 3</span></div>
+<div class="ibody">
+  <div class="float" style="font-size:3.5rem;margin-bottom:16px">&#128075;</div>
+  <h2 class="ititle">Before we start&hellip;</h2>
+  <p class="itxt">Hi! This isn&rsquo;t a test with right or wrong answers &mdash; it&rsquo;s an exploration of <strong>who you naturally are</strong>.</p>
+  <div class="icard"><p><strong>Remember:</strong> All the traits you&rsquo;re about to see apply to <em>everyone</em> at some point. The question is: what comes <em>most naturally</em> to you? What is your tendency when nobody is forcing you to be otherwise?<br><br>Answer as your truest self &mdash; not the version shaped by your job or circumstances.</p></div>
+</div>
+<div class="nav"><button class="btn-g" onclick="goTo('sh')">&#8592; Back</button><button class="btn-o" onclick="goTo('si2')">Got it &#8594;</button></div>
+</div>
+
+<!-- ===== INTRO 2 ===== -->
+<div id="si2" class="screen">
+<div class="tb"><div class="logo"><div class="logo-dot"></div>MindPals</div><span style="font-size:.8rem;font-weight:700;color:var(--g400)">Step 2 of 3</span></div>
+<div class="ibody">
+  <div class="float" style="font-size:3.5rem;margin-bottom:16px">&#128172;</div>
+  <h2 class="ititle">How it works</h2>
+  <p class="itxt">Each question shows <strong>two options</strong>. Pick whichever feels more like you &mdash; even if neither is perfect.</p>
+  <div class="icard"><p>&#128204; <strong>Read both cards first</strong> before choosing. Scroll down on mobile to see both.<br><br>&#8592; <strong>Changed your mind?</strong> Use the Back button to redo any question &mdash; no penalty!<br><br>&#127937; <strong>36 questions</strong> across 4 dimensions. There&rsquo;s a friendly checkpoint at the halfway mark.</p></div>
+</div>
+<div class="nav"><button class="btn-g" onclick="goTo('si1')">&#8592; Back</button><button class="btn-o" onclick="goTo('si3')">Next &#8594;</button></div>
+</div>
+
+<!-- ===== INTRO 3 ===== -->
+<div id="si3" class="screen">
+<div class="tb"><div class="logo"><div class="logo-dot"></div>MindPals</div><span style="font-size:.8rem;font-weight:700;color:var(--g400)">Step 3 of 3</span></div>
+<div class="ibody">
+  <div class="float" style="font-size:3.5rem;margin-bottom:16px">&#128218;</div>
+  <h2 class="ititle">The 4 dimensions</h2>
+  <p class="itxt">Your result is a 4-letter code, one letter per dimension:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;margin-bottom:20px">
+    <div style="background:#fff;border-radius:14px;padding:13px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:4px solid #F97316"><div style="font-weight:800;font-size:.9rem;margin-bottom:3px">&#9889; E vs I</div><div style="font-size:.79rem;color:var(--g600);line-height:1.5">How you recharge energy</div></div>
+    <div style="background:#fff;border-radius:14px;padding:13px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:4px solid #3B82F6"><div style="font-weight:800;font-size:.9rem;margin-bottom:3px">&#128301; S vs N</div><div style="font-size:.79rem;color:var(--g600);line-height:1.5">How you absorb information</div></div>
+    <div style="background:#fff;border-radius:14px;padding:13px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:4px solid #10B981"><div style="font-weight:800;font-size:.9rem;margin-bottom:3px">&#128172; T vs F</div><div style="font-size:.79rem;color:var(--g600);line-height:1.5">How you make decisions</div></div>
+    <div style="background:#fff;border-radius:14px;padding:13px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:4px solid #8B5CF6"><div style="font-weight:800;font-size:.9rem;margin-bottom:3px">&#128197; J vs P</div><div style="font-size:.79rem;color:var(--g600);line-height:1.5">How you structure your life</div></div>
+  </div>
+  <p style="font-size:.88rem;color:var(--g600);line-height:1.7">No type is better than any other. Each has unique strengths &mdash; let&rsquo;s find yours!</p>
+</div>
+<div class="nav"><button class="btn-g" onclick="goTo('si2')">&#8592; Back</button><button class="btn-o" style="font-size:1rem;padding:15px 38px" onclick="startQuiz()">Here we go! &#128640;</button></div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="sq" class="screen">
+<div class="tb"><div class="logo"><div class="logo-dot"></div>MindPals</div><button class="btn-g" id="backBtn" onclick="quizBack()" style="padding:8px 18px;font-size:.82rem">&#8592; Back</button></div>
+<div class="pw"><div class="pm"><span id="qNum">Question 1 of 36</span><span id="qDim" style="color:var(--or);font-weight:800">Energy Direction</span></div><div class="pt"><div class="pf" id="qProg" style="width:0%"></div></div></div>
+<div class="qbody" id="qbody"></div>
+</div>
+
+<!-- ===== TRANSITION ===== -->
+<div id="str" class="screen">
+<div style="max-width:460px;text-align:center;margin:auto;">
+  <div class="float" style="font-size:3.5rem;margin-bottom:14px">&#127881;</div>
+  <h2 style="font-size:1.7rem;font-weight:900;margin-bottom:10px">Halfway there!</h2>
+  <p style="font-size:.97rem;color:var(--g600);line-height:1.8;margin-bottom:22px">Great work on the first two dimensions! Now we explore how you <strong>make decisions</strong> and how you <strong>structure your world</strong>.</p>
+  <div class="icard"><p>&#128161; <strong>Tip:</strong> The next questions are about your <em>tendencies</em>, not your abilities. Which approach feels more like <em>home</em> to you?</p></div>
+  <button class="btn-o" onclick="resumeQuiz()">Continue &#8594;</button>
+</div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="sre" class="screen">
+<div class="rh"><p class="re">Your personality type is</p><div class="rc" id="rCode"></div><div class="rn" id="rName"></div><p class="rt" id="rTag"></p></div>
+<div class="rbody">
+  <p class="sh">Dimension Scores</p><div id="rSpec"></div>
+  <p class="sh">Core Traits</p><div class="tg" id="rTr"></div>
+  <p class="sh">Cognitive Functions</p><div class="fg" id="rFn"></div>
+  <p class="sh">Under Stress</p><div class="stg" id="rSt"></div>
+  <p class="sh">Kindred Spirits</p><div class="fw" id="rFm"></div>
+  <button class="bret" onclick="goTo('sh')">&#128260; Retake the Test</button>
+</div>
+</div>
+
+<script>
+// ── QUESTIONS ──
+var Q=[
+  {ax:"E\u2013I",ql:"Energy Direction",q:"You have an unexpected free Saturday. Your gut reaction is:",a:"Excited \u2014 time to call friends and fill the day!",b:"Relieved \u2014 finally some quiet time to recharge.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"When you have a big decision to make, you tend to:",a:"Talk it through out loud with people you trust.",b:"Process it quietly inside before discussing it.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"At a party where you know almost nobody, you feel:",a:"Genuinely excited \u2014 new people, new conversations!",b:"A bit drained \u2014 you\u2019d rather connect with the few you know.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"In a group brainstorm, you typically:",a:"Jump in early and build on others\u2019 ideas spontaneously.",b:"Listen first, then contribute one considered idea.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"After a long, very social day you feel:",a:"Energized and happy \u2014 that\u2019s what you needed.",b:"Drained and craving alone time to decompress.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"Your ideal work environment is:",a:"Open and collaborative with plenty of human interaction.",b:"Quiet and private \u2014 deep focus without interruptions.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"When figuring something out, you tend to:",a:"Think out loud \u2014 verbalizing helps you clarify.",b:"Think it through quietly before speaking.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"In friendships you tend to:",a:"Have a wide circle and enjoy meeting new people.",b:"Prefer a few deep, meaningful relationships.",as:"E",bs:"I"},
+  {ax:"E\u2013I",ql:"Energy Direction",q:"Which describes you better?",a:"Being around people gives you energy and inspiration.",b:"Time alone is when you feel most recharged and yourself.",as:"E",bs:"I"},
+  {ax:"S\u2013N",ql:"Information Style",q:"When learning something new, you prefer to:",a:"Start with concrete examples and hands-on practice.",b:"Understand the big-picture theory first.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"You are more energized by:",a:"Working with what IS \u2014 practical, real, tangible tasks.",b:"Imagining what COULD BE \u2014 possibilities and patterns.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"You tend to trust more:",a:"Direct experience and proven, time-tested methods.",b:"Intuition and patterns you sense but can\u2019t always explain.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"When you read, you prefer:",a:"Practical guides, true stories, and concrete accounts.",b:"Big ideas, theories, and conceptual frameworks.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"When making plans, you tend to:",a:"Focus on realistic steps given current resources.",b:"Dream big first, then figure out how to get there.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"Which irritates you more?",a:"People who ignore obvious practical limits and are vague.",b:"People stuck in \u201chow we\u2019ve always done it\u201d.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"Describing a past trip to someone, you:",a:"Share specific details \u2014 facts, places, exactly what happened.",b:"Describe the feeling and meaning more than the facts.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"Your memory tends to capture:",a:"Specific facts, dates, and concrete sensory details.",b:"The overall impression, meaning, and connections.",as:"S",bs:"N"},
+  {ax:"S\u2013N",ql:"Information Style",q:"You\u2019re more drawn to conversations about:",a:"What\u2019s actually happening \u2014 concrete and present.",b:"Abstract what-ifs, future possibilities, and theories.",as:"S",bs:"N"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"A close friend vents about a problem. Your first instinct is:",a:"Help them analyze it and find the best solution.",b:"Empathize and make sure they feel heard first.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"In an argument you care more about:",a:"Who is logically correct, even if it creates friction.",b:"Everyone feeling heard and the relationship staying intact.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"You find it easier to:",a:"Give direct, honest feedback even when it stings.",b:"Frame criticism gently, careful of the other\u2019s feelings.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"Which bothers you more?",a:"A decision made on feelings rather than clear logic.",b:"A technically correct decision that ignores the human cost.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"For important decisions you rely more on:",a:"Objective analysis \u2014 data, pros and cons, clear criteria.",b:"Personal values and gut feeling about what\u2019s right.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"You are more naturally motivated by:",a:"Intellectual challenges and solving complex problems.",b:"Meaningful work that helps real people.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"When someone you care about is upset, you:",a:"Want to fix the root cause of the problem.",b:"Want to be present and make them feel understood.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"People who know you well would say you\u2019re more:",a:"Rational and objective \u2014 feelings don\u2019t cloud your thinking.",b:"Warm and empathetic \u2014 deeply attuned to others\u2019 feelings.",as:"T",bs:"F"},
+  {ax:"T\u2013F",ql:"Decision Making",q:"In a struggling group project, you\u2019d first focus on:",a:"Analyzing what went wrong and improving the system.",b:"Checking in on how team members feel and rebuilding morale.",as:"T",bs:"F"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Starting a big project, you typically:",a:"Create a clear plan with milestones and work through it.",b:"Dive in and let structure emerge as you go.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Deadlines make you feel:",a:"Focused and clear \u2014 they help you prioritize.",b:"Pressured \u2014 you\u2019d prefer open-ended timelines.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Your living space or desk is typically:",a:"Organized, with a place for everything.",b:"A creative ecosystem \u2014 things are where they are for a reason.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Once a decision is settled you feel:",a:"Relieved \u2014 done, move on.",b:"Slightly uneasy \u2014 what if new info comes up?",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"A friend invites you somewhere last minute. You typically:",a:"Feel slightly annoyed \u2014 you had your day planned.",b:"Love it \u2014 spontaneous plans are the best.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Working with others you prefer:",a:"Clear roles, defined responsibilities, a shared plan.",b:"Loose, flexible collaboration that evolves.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"At the end of the day you feel best when:",a:"You finished your to-do list and feel accomplished.",b:"You followed your energy wherever it led.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Shopping for something major, you:",a:"Research, decide firmly, and commit.",b:"Enjoy exploring options for a while \u2014 no rush.",as:"J",bs:"P"},
+  {ax:"J\u2013P",ql:"Life Approach",q:"Which describes you better?",a:"People count on you to follow through \u2014 you hate loose ends.",b:"You start many things and keep some open \u2014 there\u2019s always something new.",as:"J",bs:"P"}
+];
+
+// ── TYPES ──
+var T={
+INTJ:{n:"The Mastermind",tl:"Strategic, independent, visionary. You see the whole game while others see the next move.",tr:[{i:"\uD83D\uDD2D",t:"Strategic Vision",d:"You think in systems and long arcs."},{i:"\uD83D\uDD12",t:"Self-Reliant",d:"High standards, independent judgment."},{i:"\uD83D\uDCA1",t:"Original Thinker",d:"Novel solutions over established paths."},{i:"\uD83C\uDFAF",t:"Precision",d:"You crave clarity and rigor."}],fn:[{l:"Dominant",n:"Ni",s:"Introverted Intuition"},{l:"Auxiliary",n:"Te",s:"Extraverted Thinking"},{l:"Tertiary",n:"Fi",s:"Introverted Feeling"},{l:"Inferior",n:"Se",s:"Extraverted Sensing"}],fm:["Elon Musk","Nietzsche","Michelle Obama","Christopher Nolan","Tesla"],sa:{t:"\uD83D\uDE24 Obsessed & Critical",b:["See everything that could go wrong","Become harsh and critical","Feel like the only competent one"]},sb:{t:"\uD83D\uDE30 Scattered & Impulsive",b:["Crave sensory thrills","Feel anxious about outcomes","Vision becomes foggy"]}},
+INTP:{n:"The Logician",tl:"Relentless truth-seeker. Your mind never stops untangling ideas and rebuilding frameworks.",tr:[{i:"\uD83E\uDDE9",t:"Analytical Depth",d:"Comfortable with the most complex knots."},{i:"\uD83C\uDF10",t:"Theoretical Mind",d:"Abstract ideas captivate you."},{i:"\uD83C\uDFAF",t:"Honest",d:"You call out flawed logic anywhere."},{i:"\uD83D\uDEE0",t:"Inventive",d:"Build new frameworks from scratch."}],fn:[{l:"Dominant",n:"Ti",s:"Introverted Thinking"},{l:"Auxiliary",n:"Ne",s:"Extraverted Intuition"},{l:"Tertiary",n:"Si",s:"Introverted Sensing"},{l:"Inferior",n:"Fe",s:"Extraverted Feeling"}],fm:["Einstein","Darwin","Bill Gates","Ada Lovelace","Pascal"],sa:{t:"\uD83D\uDE24 Obsessed & Doubting",b:["Worry others judge you harshly","Perfectionist loops","Feel haughty yet insecure"]},sb:{t:"\uD83D\uDE30 Emotionally Scattered",b:["Intense unfamiliar emotions","Seek connection awkwardly","Small slights feel huge"]}},
+ENTJ:{n:"The Commander",tl:"Born to lead. You see inefficiency the way others see a pothole \u2014 it simply must be fixed.",tr:[{i:"\u26A1",t:"Authority",d:"You step into leadership instinctively."},{i:"\uD83D\uDCCA",t:"Strategic Planner",d:"Big-picture goals, efficient paths."},{i:"\uD83C\uDFC6",t:"Drive to Excel",d:"Mediocrity is your nemesis."},{i:"\uD83D\uDDE3",t:"Direct",d:"You say what needs saying."}],fn:[{l:"Dominant",n:"Te",s:"Extraverted Thinking"},{l:"Auxiliary",n:"Ni",s:"Introverted Intuition"},{l:"Tertiary",n:"Se",s:"Extraverted Sensing"},{l:"Inferior",n:"Fi",s:"Introverted Feeling"}],fm:["Steve Jobs","Thatcher","Gordon Ramsay","Sandberg","Napoleon"],sa:{t:"\uD83D\uDE24 Controlling",b:["Dismiss others and take over","Feel you must do everything","Lose patience fast"]},sb:{t:"\uD83D\uDE30 Self-Critical",b:["Unexpectedly hurt by criticism","Question if you\u2019re a good person","Emotions feel overwhelming"]}},
+ENTP:{n:"The Debater",tl:"Relentless idea machine. You thrive on intellectual sparring. Boredom is your greatest enemy.",tr:[{i:"\uD83D\uDCAC",t:"Intellectual Combat",d:"You probe every argument for flaws."},{i:"\uD83C\uDF2A",t:"Generative Energy",d:"Ideas pour out faster than you can chase them."},{i:"\uD83D\uDD13",t:"Rule Challenger",d:"You question everything."},{i:"\uD83E\uDD1D",t:"Persuasive",d:"Even outrageous ideas sound compelling."}],fn:[{l:"Dominant",n:"Ne",s:"Extraverted Intuition"},{l:"Auxiliary",n:"Ti",s:"Introverted Thinking"},{l:"Tertiary",n:"Fe",s:"Extraverted Feeling"},{l:"Inferior",n:"Si",s:"Introverted Sensing"}],fm:["da Vinci","Mark Twain","Socrates","Walt Disney","C\u00E9line Dion"],sa:{t:"\uD83D\uDE24 Scattered",b:["Start many things, finish few","Argue for the sake of it","Details collapse"]},sb:{t:"\uD83D\uDE30 Rigid & Anxious",b:["Crave routine suddenly","Obsess over past mistakes","Feel paralyzed"]}},
+INFJ:{n:"The Advocate",tl:"The rarest type. You carry a profound inner vision and feel urgently called to make the world better.",tr:[{i:"\uD83C\uDF31",t:"Deep Idealism",d:"You hold vivid visions and work toward them."},{i:"\uD83D\uDD2E",t:"Prophetic Intuition",d:"You sense how things unfold."},{i:"\uD83D\uDC9B",t:"Empathic Presence",d:"You feel others\u2019 emotions as your own."},{i:"\u270D\uFE0F",t:"Purposeful",d:"Every word is chosen with care."}],fn:[{l:"Dominant",n:"Ni",s:"Introverted Intuition"},{l:"Auxiliary",n:"Fe",s:"Extraverted Feeling"},{l:"Tertiary",n:"Ti",s:"Introverted Thinking"},{l:"Inferior",n:"Se",s:"Extraverted Sensing"}],fm:["MLK Jr.","Carl Jung","Dostoevsky","Plato","Mother Teresa"],sa:{t:"\uD83D\uDE24 Resentful",b:["Shut down and withdraw","Feel profoundly misunderstood","Resent those who don\u2019t share your values"]},sb:{t:"\uD83D\uDE30 Reckless",b:["Become uncharacteristically impulsive","Overindulge in distractions","Inner vision goes dark"]}},
+INFP:{n:"The Idealist",tl:"Your internal compass is so finely calibrated that compromise feels like a small death.",tr:[{i:"\uD83C\uDFA8",t:"Creative Depth",d:"Rich inner life seeking expression."},{i:"\uD83E\uDDED",t:"Values-Driven",d:"Integrity is non-negotiable."},{i:"\uD83C\uDF0A",t:"Emotional Intelligence",d:"You read undercurrents others miss."},{i:"\uD83D\uDC9A",t:"Empathic Idealism",d:"You believe in human goodness."}],fn:[{l:"Dominant",n:"Fi",s:"Introverted Feeling"},{l:"Auxiliary",n:"Ne",s:"Extraverted Intuition"},{l:"Tertiary",n:"Si",s:"Introverted Sensing"},{l:"Inferior",n:"Te",s:"Extraverted Thinking"}],fm:["Shakespeare","Tolkien","Virginia Woolf","Johnny Depp","Bj\u00F6rk"],sa:{t:"\uD83D\uDE24 Self-Critical",b:["Feel like a fraud","Withdraw and stop creating","Values feel impossible to live by"]},sb:{t:"\uD83D\uDE30 Controlling",b:["Try to impose plans on others","Become nitpicky","Small inefficiencies feel maddening"]}},
+ENFJ:{n:"The Protagonist",tl:"Natural people-leader through warmth. You see the best in everyone and feel responsible for helping them reach it.",tr:[{i:"\u2728",t:"Inspirational",d:"You bring out the best in others."},{i:"\uD83E\uDD32",t:"Selfless Empathy",d:"Others\u2019 needs come first."},{i:"\uD83C\uDFAD",t:"Social Intelligence",d:"You read a room with precision."},{i:"\uD83C\uDFF9",t:"Mission-Driven",d:"You need your work to carry meaning."}],fn:[{l:"Dominant",n:"Fe",s:"Extraverted Feeling"},{l:"Auxiliary",n:"Ni",s:"Introverted Intuition"},{l:"Tertiary",n:"Se",s:"Extraverted Sensing"},{l:"Inferior",n:"Ti",s:"Introverted Thinking"}],fm:["Obama","Oprah","Maya Angelou","Malala","Mandela"],sa:{t:"\uD83D\uDE24 Controlling",b:["Manage others\u2019 feelings unhealthily","Feel responsible for everyone","Become passive-aggressive"]},sb:{t:"\uD83D\uDE30 Detached",b:["Shut down emotionally","Become hypercritical","Nothing feels good enough"]}},
+ENFP:{n:"The Campaigner",tl:"Irrepressibly curious and enthusiastic. You move through life like a comet \u2014 warm, fast, unforgettable.",tr:[{i:"\uD83D\uDD25",t:"Enthusiasm",d:"Your energy lights up everyone around you."},{i:"\uD83C\uDF08",t:"Optimism",d:"You see potential in every situation."},{i:"\uD83E\uDD17",t:"People-Centred",d:"You love people as much as ideas."},{i:"\uD83C\uDFAA",t:"Creative",d:"You thrive in open, unstructured spaces."}],fn:[{l:"Dominant",n:"Ne",s:"Extraverted Intuition"},{l:"Auxiliary",n:"Fi",s:"Introverted Feeling"},{l:"Tertiary",n:"Te",s:"Extraverted Thinking"},{l:"Inferior",n:"Si",s:"Introverted Sensing"}],fm:["Robin Williams","Ellen DeGeneres","Anne Frank","Walt Whitman","Dr. Seuss"],sa:{t:"\uD83D\uDE24 Scattered",b:["Start hundreds of things, finish none","Become harsh on yourself","Feel you\u2019re not living up to potential"]},sb:{t:"\uD83D\uDE30 Rigid",b:["Fixate on small details","Cling to routine unusually","Past mistakes feel paralyzing"]}},
+ISTJ:{n:"The Logistician",tl:"The world runs on people like you. Thorough, reliable, precise \u2014 your follow-through is a gift others build their lives on.",tr:[{i:"\uD83D\uDCCB",t:"Duty",d:"Your word is your bond."},{i:"\uD83C\uDFC7",t:"Systematic",d:"You build structures that make work run smoothly."},{i:"\uD83D\uDCDA",t:"Fact-Based",d:"Trust verified information over speculation."},{i:"\uD83D\uDD27",t:"Practical Mastery",d:"Deep expertise, quiet pride in doing things right."}],fn:[{l:"Dominant",n:"Si",s:"Introverted Sensing"},{l:"Auxiliary",n:"Te",s:"Extraverted Thinking"},{l:"Tertiary",n:"Fi",s:"Introverted Feeling"},{l:"Inferior",n:"Ne",s:"Extraverted Intuition"}],fm:["G. Washington","Angela Merkel","Warren Buffett","Natalie Portman","Jeff Bezos"],sa:{t:"\uD83D\uDE24 Rigid",b:["Resist any change","Focus on everything that could go wrong","Feel catastrophically overwhelmed"]},sb:{t:"\uD83D\uDE30 Impulsive",b:["Make reckless decisions","Lose your usual groundedness","New possibilities feel disorienting"]}},
+ISFJ:{n:"The Defender",tl:"Quietly powerful. You protect the people you love with fierce, unassuming dedication.",tr:[{i:"\uD83D\uDEE1",t:"Loyalty",d:"Steadfast devotion, especially in hard times."},{i:"\uD83C\uDFE0",t:"Nurturing",d:"You create warmth and security for others."},{i:"\uD83D\uDCDD",t:"Observant",d:"You remember every detail about those you love."},{i:"\u2699\uFE0F",t:"Diligent",d:"Critical work done quietly, without needing credit."}],fn:[{l:"Dominant",n:"Si",s:"Introverted Sensing"},{l:"Auxiliary",n:"Fe",s:"Extraverted Feeling"},{l:"Tertiary",n:"Ti",s:"Introverted Thinking"},{l:"Inferior",n:"Ne",s:"Extraverted Intuition"}],fm:["Mother Teresa","Beyonc\u00E9","Rosa Parks","Kate Middleton","Vin Diesel"],sa:{t:"\uD83D\uDE24 Resentful",b:["Resent those you\u2019ve been supporting","Feel taken for granted","Can\u2019t say no even when depleted"]},sb:{t:"\uD83D\uDE30 Catastrophic",b:["Imagine everything going wrong","Paralyzed by new situations","Lose trust in your instincts"]}},
+ESTJ:{n:"The Executive",tl:"A pillar of any organization. You create order from chaos through decisive leadership.",tr:[{i:"\uD83D\uDCCC",t:"Decisive",d:"You own outcomes with unapologetic confidence."},{i:"\uD83D\uDCCF",t:"Standards",d:"High expectations, not afraid to say so."},{i:"\uD83D\uDDC2",t:"Organizing",d:"You structure everything that needs structuring."},{i:"\uD83E\uDD1D",t:"Community",d:"You value tradition and enduring institutions."}],fn:[{l:"Dominant",n:"Te",s:"Extraverted Thinking"},{l:"Auxiliary",n:"Si",s:"Introverted Sensing"},{l:"Tertiary",n:"Ne",s:"Extraverted Intuition"},{l:"Inferior",n:"Fi",s:"Introverted Feeling"}],fm:["Judge Judy","Sinatra","Sonia Sotomayor","Henry Ford","LBJ"],sa:{t:"\uD83D\uDE24 Domineering",b:["Steamroll over concerns","Double down on rules not working","Become inflexible and punitive"]},sb:{t:"\uD83D\uDE30 Emotionally Raw",b:["Intense unfamiliar emotions surface","Feel guilty about past harshness","Withdraw from leadership"]}},
+ESFJ:{n:"The Caregiver",tl:"The social fabric of any community. You notice someone struggling before they\u2019ve said a word.",tr:[{i:"\uD83D\uDC9E",t:"Warm-Hearted",d:"You genuinely care, shown through consistent action."},{i:"\uD83E\uDD1D",t:"Social Harmony",d:"You keep the group\u2019s emotional climate positive."},{i:"\uD83C\uDF81",t:"Generous",d:"You give freely before anyone even asks."},{i:"\uD83D\uDCE3",t:"Communal",d:"You thrive in shared traditions and rituals."}],fn:[{l:"Dominant",n:"Fe",s:"Extraverted Feeling"},{l:"Auxiliary",n:"Si",s:"Introverted Sensing"},{l:"Tertiary",n:"Ne",s:"Extraverted Intuition"},{l:"Inferior",n:"Ti",s:"Introverted Thinking"}],fm:["Taylor Swift","Bill Clinton","Jennifer Garner","Elton John","Sally Field"],sa:{t:"\uD83D\uDE24 Clingy",b:["Overly involved in others\u2019 decisions","Hurt when help isn\u2019t appreciated","Monitor for rejection signs"]},sb:{t:"\uD83D\uDE30 Critical",b:["Shut down emotionally","Become sharply self-critical","Second-guess every interaction"]}},
+ISTP:{n:"The Virtuoso",tl:"Cool-headed pragmatist who masters the mechanics of everything. When others panic, you focus.",tr:[{i:"\uD83D\uDD29",t:"Technical Mastery",d:"You understand how every system works."},{i:"\uD83E\uDDCA",t:"Crisis Calm",d:"Pressure clarifies rather than clouds."},{i:"\uD83D\uDD0D",t:"Observant",d:"Trust concrete evidence over theory."},{i:"\u26A1",t:"Action-Oriented",d:"Best way to understand is to take it apart."}],fn:[{l:"Dominant",n:"Ti",s:"Introverted Thinking"},{l:"Auxiliary",n:"Se",s:"Extraverted Sensing"},{l:"Tertiary",n:"Ni",s:"Introverted Intuition"},{l:"Inferior",n:"Fe",s:"Extraverted Feeling"}],fm:["Clint Eastwood","Michael Jordan","Bruce Lee","Scarlett Johansson","Tom Cruise"],sa:{t:"\uD83D\uDE24 Reckless",b:["Take genuinely dangerous risks","Snap at people","Seek thrills as escape"]},sb:{t:"\uD83D\uDE30 Dramatic",b:["Intense emotions surface unexpectedly","Feel desperate for connection","Convinced worst outcome is coming"]}},
+ISFP:{n:"The Artist",tl:"Quietly vibrant. You carry a rich inner aesthetic and deep sensitivity to beauty in all forms.",tr:[{i:"\uD83C\uDFB6",t:"Aesthetic Sensitivity",d:"Attuned to beauty in every form."},{i:"\uD83C\uDF3F",t:"Present-Moment",d:"You live fully in the now."},{i:"\u2764",t:"Compassionate",d:"Values run deep, acted on quietly."},{i:"\uD83E\uDD8B",t:"Free",d:"Life unfolds organically and authentically."}],fn:[{l:"Dominant",n:"Fi",s:"Introverted Feeling"},{l:"Auxiliary",n:"Se",s:"Extraverted Sensing"},{l:"Tertiary",n:"Ni",s:"Introverted Intuition"},{l:"Inferior",n:"Te",s:"Extraverted Thinking"}],fm:["Michael Jackson","Bob Dylan","Frida Kahlo","Prince","Lana Del Rey"],sa:{t:"\uD83D\uDE24 Withdrawn",b:["Nobody truly understands you","Harsh self-criticism","Isolate from those who care"]},sb:{t:"\uD83D\uDE30 Combative",b:["Uncharacteristically aggressive","Try to control outcomes","Obsess over logic and efficiency"]}},
+ESTP:{n:"The Dynamo",tl:"You live in the present. You act on instinct, read people in seconds, and make things happen right now.",tr:[{i:"\u26A1",t:"Decisive Action",d:"You spot and move on opportunities instantly."},{i:"\uD83C\uDFC4",t:"Risk Tolerance",d:"Uncertainty energizes rather than paralyzes."},{i:"\uD83C\uDFAF",t:"Situational IQ",d:"You read people and rooms with lightning speed."},{i:"\uD83D\uDCA5",t:"Bold & Direct",d:"You say what you mean and do what you say."}],fn:[{l:"Dominant",n:"Se",s:"Extraverted Sensing"},{l:"Auxiliary",n:"Ti",s:"Introverted Thinking"},{l:"Tertiary",n:"Fe",s:"Extraverted Feeling"},{l:"Inferior",n:"Ni",s:"Introverted Intuition"}],fm:["Hemingway","Jack Nicholson","Madonna","Eddie Murphy","Churchill"],sa:{t:"\uD83D\uDE24 Aggressive",b:["Take genuinely dangerous risks","Combative when challenged","Ignore consequences for action"]},sb:{t:"\uD83D\uDE30 Paranoid",b:["Imagine elaborate catastrophic futures","Feel inexplicably trapped","Withdraw unusually"]}},
+ESFP:{n:"The Entertainer",tl:"Pure radiant presence. You bring colour, laughter, and spontaneous joy wherever you go.",tr:[{i:"\uD83C\uDF89",t:"Spontaneous Joy",d:"You find delight in any situation."},{i:"\uD83C\uDF1F",t:"Magnetic",d:"People are drawn to your warmth and humour."},{i:"\uD83D\uDC41",t:"Aesthetic",d:"Attuned to beauty and the sensory world."},{i:"\uD83D\uDC9B",t:"Generous",d:"You give freely because connection is everything."}],fn:[{l:"Dominant",n:"Se",s:"Extraverted Sensing"},{l:"Auxiliary",n:"Fi",s:"Introverted Feeling"},{l:"Tertiary",n:"Te",s:"Extraverted Thinking"},{l:"Inferior",n:"Ni",s:"Introverted Intuition"}],fm:["Marilyn Monroe","Elvis Presley","Adele","Katy Perry","Will Smith"],sa:{t:"\uD83D\uDE24 Attention-Seeking",b:["Crave approval desperately","Overshare then regret it","Start things and can\u2019t finish"]},sb:{t:"\uD83D\uDE30 Dark & Isolated",b:["Frightening futures dominate your mind","Feel suddenly alone","Question whether life has meaning"]}}
+};
+
+// ── STATE ──
+var ans=new Array(36).fill(null),curQ=0,sc={};
+function resetSc(){sc={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};}
+
+// ── NAVIGATION ──
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  curQ=0;
+  ans=new Array(36).fill(null);
+  resetSc();
+  goTo('sq');
+  renderQ();
+}
+
+function resumeQuiz(){goTo('sq');renderQ();}
+
+function quizBack(){
+  if(curQ===0){goTo('si3');return;}
+  var pq=Q[curQ-1];
+  if(ans[curQ-1]!==null){sc[ans[curQ-1]==='a'?pq.as:pq.bs]--;}
+  curQ--;
+  renderQ();
+}
+
+// ── MASCOT SVGs ──
+function mascot(i){
+  if(i%3===0)return'<svg width="64" height="74" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="90" rx="22" ry="26" fill="#C2410C"/><ellipse cx="50" cy="93" rx="18" ry="20" fill="#FED7AA"/><rect x="42" y="80" width="16" height="22" rx="4" fill="#D97706" opacity=".6"/><polygon points="46,82 54,82 50,90" fill="#FCD34D"/><ellipse cx="50" cy="58" rx="22" ry="20" fill="#EA580C"/><polygon points="30,44 36,32 42,46" fill="#EA580C"/><polygon points="32,44 36,36 41,46" fill="#FCA5A5"/><polygon points="70,44 64,32 58,46" fill="#EA580C"/><polygon points="68,44 64,36 59,46" fill="#FCA5A5"/><ellipse cx="50" cy="63" rx="14" ry="11" fill="#FED7AA"/><circle cx="44" cy="56" r="5" fill="white"/><circle cx="56" cy="56" r="5" fill="white"/><circle cx="45" cy="57" r="3" fill="#1F2937"/><circle cx="57" cy="57" r="3" fill="#1F2937"/><circle cx="46" cy="56" r="1" fill="white"/><circle cx="58" cy="56" r="1" fill="white"/><rect x="38" y="52" width="11" height="9" rx="4" fill="none" stroke="#374151" stroke-width="1.5"/><rect x="51" y="52" width="11" height="9" rx="4" fill="none" stroke="#374151" stroke-width="1.5"/><line x1="49" y1="56" x2="51" y2="56" stroke="#374151" stroke-width="1.5"/><ellipse cx="50" cy="63" rx="3" ry="2" fill="#BE185D"/><path d="M44 67 Q50 72 56 67" stroke="#92400E" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
+  if(i%3===1)return'<svg width="64" height="74" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg"><ellipse cx="65" cy="118" rx="28" ry="30" fill="#92400E"/><ellipse cx="65" cy="120" rx="24" ry="26" fill="#3B82F6" opacity=".75"/><ellipse cx="65" cy="122" rx="12" ry="20" fill="#EFF6FF"/><ellipse cx="65" cy="68" rx="28" ry="26" fill="#FED7AA"/><ellipse cx="65" cy="46" rx="30" ry="14" fill="white"/><ellipse cx="42" cy="54" rx="10" ry="16" fill="white" transform="rotate(-20,42,54)"/><ellipse cx="88" cy="54" rx="10" ry="16" fill="white" transform="rotate(20,88,54)"/><ellipse cx="65" cy="42" rx="10" ry="10" fill="white"/><path d="M46,60 Q52,56 58,60" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M72,60 Q78,56 84,60" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="53" cy="65" r="6" fill="white"/><circle cx="77" cy="65" r="6" fill="white"/><circle cx="54" cy="66" r="4" fill="#1F2937"/><circle cx="78" cy="66" r="4" fill="#1F2937"/><circle cx="55" cy="65" r="1.5" fill="white"/><circle cx="79" cy="65" r="1.5" fill="white"/><ellipse cx="65" cy="74" rx="4" ry="3" fill="#FCA5A5"/><ellipse cx="59" cy="79" rx="7" ry="4" fill="white" opacity=".9"/><ellipse cx="71" cy="79" rx="7" ry="4" fill="white" opacity=".9"/><path d="M57 83 Q65 89 73 83" stroke="#92400E" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+  return'<svg width="64" height="74" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="92" rx="22" ry="24" fill="#6B7280"/><ellipse cx="50" cy="94" rx="14" ry="18" fill="#E5E7EB"/><ellipse cx="50" cy="62" rx="22" ry="20" fill="#9CA3AF"/><ellipse cx="42" cy="60" rx="8" ry="6" fill="#374151"/><ellipse cx="58" cy="60" rx="8" ry="6" fill="#374151"/><ellipse cx="33" cy="46" rx="7" ry="9" fill="#6B7280"/><ellipse cx="33" cy="46" rx="4" ry="6" fill="#9CA3AF"/><ellipse cx="67" cy="46" rx="7" ry="9" fill="#6B7280"/><ellipse cx="67" cy="46" rx="4" ry="6" fill="#9CA3AF"/><ellipse cx="50" cy="67" rx="12" ry="9" fill="#F9FAFB"/><circle cx="42" cy="59" r="5" fill="white"/><circle cx="58" cy="59" r="5" fill="white"/><circle cx="43" cy="60" r="3" fill="#1F2937"/><circle cx="59" cy="60" r="3" fill="#1F2937"/><ellipse cx="50" cy="67" rx="3.5" ry="2.5" fill="#4B5563"/><path d="M44 71 Q50 75 56 71" stroke="#4B5563" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
+}
+
+// ── RENDER QUESTION ──
+function renderQ(){
+  var q=Q[curQ];
+  document.getElementById('qProg').style.width=((curQ/36)*100)+'%';
+  document.getElementById('qNum').textContent='Question '+(curQ+1)+' of 36';
+  document.getElementById('qDim').textContent=q.ql;
+  document.getElementById('backBtn').style.visibility=curQ===0?'hidden':'visible';
+  var sa=ans[curQ]==='a',sb=ans[curQ]==='b';
+  document.getElementById('qbody').innerHTML=
+    '<div class="qhdr fu">'+
+      '<div class="float">'+mascot(curQ)+'</div>'+
+      '<div class="qbub"><div class="qlbl">'+q.ax+' \u00B7 '+q.ql+'</div><div class="qtxt">'+q.q+'</div></div>'+
+    '</div>'+
+    '<div class="cw fu" style="animation-delay:.12s">'+
+      '<div class="cc'+(sa?' sel':'')+'" onclick="pick(\'a\',this)"><div class="cl">A</div><div class="ct">'+q.a+'</div></div>'+
+      '<div class="cc'+(sb?' sel':'')+'" onclick="pick(\'b\',this)"><div class="cl">B</div><div class="ct">'+q.b+'</div></div>'+
+    '</div>';
+}
+
+function pick(letter,el){
+  var q=Q[curQ];
+  if(ans[curQ]!==null){sc[ans[curQ]==='a'?q.as:q.bs]--;}
+  ans[curQ]=letter;
+  sc[letter==='a'?q.as:q.bs]++;
+  document.querySelectorAll('.cc').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  setTimeout(function(){
+    curQ++;
+    if(curQ===18){goTo('str');}
+    else if(curQ>=36){showResult();}
+    else{renderQ();}
+  },320);
+}
+
+// ── RESULT ──
+function showResult(){
+  var E=sc.E>=sc.I?'E':'I',S=sc.S>=sc.N?'S':'N',Tf=sc.T>=sc.F?'T':'F',J=sc.J>=sc.P?'J':'P';
+  var type=E+S+Tf+J,p=T[type];
+  document.getElementById('rCode').textContent=type;
+  document.getElementById('rName').textContent='\u201C'+p.n+'\u201D';
+  document.getElementById('rTag').textContent=p.tl;
+  var dims=[{a:'E',b:'I',la:'Extraverted',lb:'Introverted'},{a:'S',b:'N',la:'Sensing',lb:'Intuitive'},{a:'T',b:'F',la:'Thinking',lb:'Feeling'},{a:'J',b:'P',la:'Judging',lb:'Perceiving'}];
+  var sh='';
+  dims.forEach(function(d){
+    var tot=sc[d.a]+sc[d.b],pct=tot>0?Math.round((sc[d.a]/tot)*100):50;
+    var win=pct>=50?d.a:d.b,wp=pct>=50?pct:100-pct;
+    sh+='<div class="sc"><div class="sr"><span class="sl">'+d.la+' <strong>'+d.a+'</strong></span><span class="sp">'+wp+'% '+win+'</span><span class="srr"><strong>'+d.b+'</strong> '+d.lb+'</span></div><div class="bw"><div class="bf" id="b'+d.a+'" data-p="'+pct+'"></div></div></div>';
+  });
+  document.getElementById('rSpec').innerHTML=sh;
+  document.getElementById('rTr').innerHTML=p.tr.map(function(t){return'<div class="tc"><div class="ti">'+t.i+'</div><div class="tt">'+t.t+'</div><div class="td">'+t.d+'</div></div>';}).join('');
+  document.getElementById('rFn').innerHTML=p.fn.map(function(f){return'<div class="fc"><span class="fl">'+f.l+'</span><div class="fn">'+f.n+'</div><span class="fs">'+f.s+'</span></div>';}).join('');
+  document.getElementById('rSt').innerHTML='<div class="stc"><div class="stt">'+p.sa.t+'</div><ul>'+p.sa.b.map(function(b){return'<li>'+b+'</li>';}).join('')+'</ul></div><div class="stc"><div class="stt">'+p.sb.t+'</div><ul>'+p.sb.b.map(function(b){return'<li>'+b+'</li>';}).join('')+'</ul></div>';
+  document.getElementById('rFm').innerHTML=p.fm.map(function(n){return'<div class="fp">'+n+'</div>';}).join('');
+  goTo('sre');
+  setTimeout(function(){dims.forEach(function(d){var el=document.getElementById('b'+d.a);if(el)el.style.width=el.dataset.p+'%';});},500);
+}
+</script>
+</body></html>
